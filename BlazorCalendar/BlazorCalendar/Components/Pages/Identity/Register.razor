@@ -1,0 +1,108 @@
+﻿@page "/sign-up"
+
+@using BlazorCalendar.UseCases.Identity
+@using BlazorCalendar.DTOs
+
+@inject IRegisterUser registerUserUserCase
+@inject NavigationManager navigationManager
+
+<PageTitle>Register</PageTitle>
+
+<div class="register-wrapper">
+    <div class="register-form-container">
+        <div class="register-form-caption">Register</div>
+        <div class="register-form-container-inner">
+        <EditForm method="post" EditContext="editContext" OnValidSubmit="@RegisterUser" FormName="RegisterUser">
+            <div>First name:*</div>
+            <div class="input-holder">
+               <InputText @bind-Value="RegisterModel.FirstName"  />
+            </div>
+             <ValidationMessage For="() => RegisterModel.FirstName" />
+            <div>Last name:</div>
+            <div class="input-holder">
+               <InputText @bind-Value="RegisterModel.LastName" />
+            </div>
+            <ValidationMessage For="() => RegisterModel.LastName" />
+            <div>Email:*</div>
+            <div class="input-holder">
+                <InputText @bind-Value="RegisterModel.Email" />
+            </div>
+            <ValidationMessage For="() => RegisterModel.Email" />
+            <div>Password:*</div>
+            <div class="input-holder">
+               <InputText @bind-Value="RegisterModel.Password" type="password" />
+            </div>
+            <ValidationMessage For="() => RegisterModel.Password" />
+            <div>Confirm password:*</div>
+            <div class="input-holder">
+                <InputText @bind-Value="RegisterModel.ConfirmPassword" type="password" />
+            </div>
+            <ValidationMessage For="() => RegisterModel.ConfirmPassword" />
+            <div class="button-container">
+                <button class="btn btn-primary" type="submit">Register..</button>
+            </div>
+        </EditForm>
+        </div>
+    </div>
+</div>
+
+@code {
+    private EditContext? editContext;
+    private ValidationMessageStore? messageStore;
+    private string? registerError;
+
+    [SupplyParameterFromForm]
+    public RegisterModel RegisterModel { get; set; } = new();
+
+    private async Task RegisterUser()
+    {
+        // Create a new user if the email is unique
+        // Or show registration error otherwise
+        RegisterResult registerResult = await registerUserUserCase.ProcessAsync(RegisterModel);
+        if (registerResult.IsSuccess)
+        {
+            navigationManager.NavigateTo("/login");
+
+            return;
+        }
+
+        registerError = registerResult.Error;
+        StateHasChanged();
+    }
+
+    protected override void OnInitialized()
+    {
+        base.OnInitialized();
+
+        editContext = new EditContext(RegisterModel);
+        editContext.OnValidationRequested += (sender, args) =>
+        {
+            messageStore?.Clear();
+            if (string.IsNullOrEmpty(RegisterModel.FirstName))
+            {
+                messageStore?.Add(() => RegisterModel.FirstName, "Please enter your first name.");
+            }
+
+            if (string.IsNullOrEmpty(RegisterModel.Email))
+            {
+                messageStore?.Add(() => RegisterModel.Email, "Please enter your email address.");
+            }
+
+            if (string.IsNullOrEmpty(RegisterModel.Password))
+            {
+                messageStore?.Add(() => RegisterModel.Password, "Please enter your password.");
+            }
+
+            if (string.IsNullOrEmpty(RegisterModel.ConfirmPassword))
+            {
+                messageStore?.Add(() => RegisterModel.ConfirmPassword, "Please enter your password again.");
+            }
+            else if (!string.Equals(RegisterModel.Password, RegisterModel.ConfirmPassword))
+            {
+                messageStore?.Add(() => RegisterModel.ConfirmPassword, "This is not the password you entered above.");
+            }
+        };
+
+        messageStore = new ValidationMessageStore(editContext);
+    }
+}

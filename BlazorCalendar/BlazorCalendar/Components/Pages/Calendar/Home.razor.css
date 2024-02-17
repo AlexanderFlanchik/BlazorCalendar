@@ -1,0 +1,7 @@
+﻿
+.button-bar {
+    margin-top: 5px;
+    display: flex;
+    gap: 5px;
+    width: 320px;
+}

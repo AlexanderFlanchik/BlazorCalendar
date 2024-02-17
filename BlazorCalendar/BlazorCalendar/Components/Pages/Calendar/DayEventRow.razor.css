@@ -1,0 +1,24 @@
+﻿.evt-content {
+    text-decoration: none;
+    color: white;
+}
+
+.evt-content:hover {
+    color: yellow;
+}
+
+.evt-passed-content {
+    color: white;
+}
+
+.evt-link-container {
+    display: flex;
+    justify-content: space-between;
+}
+
+.evt-delete-link {
+    color: red;
+    font-weight: 700;
+    font-size: 14px;
+    text-decoration: none;
+}

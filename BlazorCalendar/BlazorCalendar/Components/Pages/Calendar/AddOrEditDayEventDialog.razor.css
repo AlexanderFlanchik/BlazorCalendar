@@ -1,0 +1,32 @@
+﻿.add-new-event-inner {
+    padding: 5px;
+}
+
+    .add-new-event-inner ::deep input {
+        width: 100%;
+    }
+
+.add-new-event-footer {
+    border-top: 1px solid navy;
+    padding: 5px;
+    display: flex;
+    gap: 5px;
+    justify-content: flex-end;
+}
+
+.timestamp-container {
+    display: flex;
+    margin-top: 5px;
+    gap: 2px;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.validation-errors-container {
+    padding: 5px;
+}
+
+.validation-errors-list li {
+    color: red;
+    font-weight: bold;
+}

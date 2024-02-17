@@ -1,0 +1,55 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.8.34316.72
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BlazorCalendar", "BlazorCalendar\BlazorCalendar\BlazorCalendar.csproj", "{6C8366B9-8E7C-43BF-9707-CFE75254E5E7}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BlazorCalendar.Client", "BlazorCalendar\BlazorCalendar.Client\BlazorCalendar.Client.csproj", "{5E6F7720-B788-4E81-BF7A-C9BCD5BFC750}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BlazorCalendar.Domain", "BlazorCalendar.Domain\BlazorCalendar.Domain.csproj", "{520369F7-8210-414C-BD07-3BC59246FB25}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BlazorCalendar.Application", "BlazorCalendar.Application\BlazorCalendar.Application.csproj", "{402BBE50-514E-476D-9BF9-39B5C896A4F2}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BlazorCalendar.Infrastructure", "BlazorCalendar.Infrastructure\BlazorCalendar.Infrastructure.csproj", "{A6B23540-6B92-46A7-8EA1-ADA810AC3965}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BlazorCalendar.Shared", "BlazorCalendar.Shared\BlazorCalendar.Shared.csproj", "{F35881A5-9129-4A88-9AEF-80A234096F4B}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{6C8366B9-8E7C-43BF-9707-CFE75254E5E7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6C8366B9-8E7C-43BF-9707-CFE75254E5E7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6C8366B9-8E7C-43BF-9707-CFE75254E5E7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6C8366B9-8E7C-43BF-9707-CFE75254E5E7}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5E6F7720-B788-4E81-BF7A-C9BCD5BFC750}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5E6F7720-B788-4E81-BF7A-C9BCD5BFC750}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5E6F7720-B788-4E81-BF7A-C9BCD5BFC750}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5E6F7720-B788-4E81-BF7A-C9BCD5BFC750}.Release|Any CPU.Build.0 = Release|Any CPU
+		{520369F7-8210-414C-BD07-3BC59246FB25}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{520369F7-8210-414C-BD07-3BC59246FB25}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{520369F7-8210-414C-BD07-3BC59246FB25}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{520369F7-8210-414C-BD07-3BC59246FB25}.Release|Any CPU.Build.0 = Release|Any CPU
+		{402BBE50-514E-476D-9BF9-39B5C896A4F2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{402BBE50-514E-476D-9BF9-39B5C896A4F2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{402BBE50-514E-476D-9BF9-39B5C896A4F2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{402BBE50-514E-476D-9BF9-39B5C896A4F2}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A6B23540-6B92-46A7-8EA1-ADA810AC3965}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A6B23540-6B92-46A7-8EA1-ADA810AC3965}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A6B23540-6B92-46A7-8EA1-ADA810AC3965}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A6B23540-6B92-46A7-8EA1-ADA810AC3965}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F35881A5-9129-4A88-9AEF-80A234096F4B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F35881A5-9129-4A88-9AEF-80A234096F4B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F35881A5-9129-4A88-9AEF-80A234096F4B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F35881A5-9129-4A88-9AEF-80A234096F4B}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {3D52C537-4EAB-4B13-8158-920EF39C5B4A}
+	EndGlobalSection
+EndGlobal

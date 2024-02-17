@@ -1,0 +1,86 @@
+﻿.event-grid {
+    margin-top: 5px;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: flex-start;
+    gap: 10px;
+    padding: 5px;
+    border: 1px solid navy;
+    max-height: 680px;
+    overflow: auto;
+}
+
+.day-card {
+    width: 250px;
+    height: 300px;
+    border: 1px solid navy;
+    border-radius: 5px;
+    background-color: white;
+}
+
+.day-today {
+    border: 5px solid navy !important;
+    border-radius: 10px;
+}
+
+.day-past {
+    background-color: lightgrey;
+}
+
+.day-card-header {
+    display: flex;
+    justify-content: space-between;
+    padding: 5px;
+    border-bottom: 1px solid navy;
+    background-color: antiquewhite;
+}
+
+.day-title {
+    color: navy;
+    font-weight: 700;
+    word-spacing: 1px;
+    font-style: italic;
+    font-size: 12px;
+    line-height: 14px;
+}
+
+.day-card-events-list {
+    list-style-type: none;
+    padding-left: 5px;
+}
+
+.day-card-events-list > li {
+    margin-top: 5px;
+    margin-right: 5px;
+    line-height: 16px;
+    background-color: blue;
+    color: white;
+    padding: 5px;
+    border-radius: 8px;
+}
+
+.show-all-link-container {
+    padding-left: 5px;
+    margin-top: 5px;
+}
+
+.show-all-link {
+    text-decoration: none;
+    color: navy;
+}
+
+.show-all-link:hover {
+    text-decoration: none;
+    color: red;
+}
+
+.add-event {
+    font-weight: bold;
+    line-height: 14px;
+}
+
+.add-event-link {
+    text-decoration: none;
+    color: red;
+    font-size: 14px;
+}

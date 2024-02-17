@@ -1,0 +1,17 @@
+﻿.all-events-title {
+    color: red;
+}
+
+.all-events-footer {
+    padding: 5px;
+    text-align: right;
+}
+
+.event-row {
+    border-radius: 5px;
+    margin-top: 5px;
+    margin-left: 5px;
+    margin-right: 5px;
+    background-color: blue;
+    padding: 5px;
+}

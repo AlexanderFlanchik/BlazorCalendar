@@ -1,0 +1,198 @@
+﻿@rendermode InteractiveAuto
+
+@using BlazorCalendar.Application.Features.Calendar.Queries
+@using BlazorCalendar.Client.Pages
+@using BlazorCalendar.Client.Components
+@using BlazorCalendar.DTOs
+@using BlazorCalendar.UseCases.Calendar
+@using System.ComponentModel.DataAnnotations
+@using BlazorCalendar.Shared.Common
+
+@inject ITimeZoneService timeZoneService
+@inject IAddDayEvent addDayEventUseCase
+@inject IDeleteDayEvent deleteEventUseCase
+@inject IUpdateDayEvent updateDayEventUseCase
+
+<div class="event-grid">
+    @{
+        var now = new DateTime(DateTime.UtcNow.Year, DateTime.UtcNow.Month, DateTime.UtcNow.Day);
+    }
+
+    @for (var day = 1; day <= _lastMonthDay; day++)
+    {
+        <DayCard
+            Today="now" 
+            LastMonthDay="_lastMonthDay" 
+            Month="Month" 
+            Year="Year" 
+            Day="day" 
+            TimeZoneOffset="_timeZoneOffset"
+            Events="GetEvents(day)"
+            OnAddOrEventDialogOpen="OnAddOrEventDialogOpen"
+            OnDeleteEvent="DeleteDayEvent" />
+    }
+</div>
+
+<AddOrEditDayEventDialog @ref="dayEventDialog" 
+    DialogContext="AddOrEditEventModel" 
+    OnDayEventAddedOrEdited="AddOrEditDayEvent" />
+
+<ConfirmDialog @ref="confirmDialog" />
+
+@code {
+    private int _lastMonthDay;
+    private AddOrEditDayEventDialog dayEventDialog = default!;
+    private ConfirmDialog confirmDialog = default!;
+
+    private TimeSpan _timeZoneOffset;
+
+    [Parameter]
+    public string UserId { get; set; } = default!;
+
+    [Parameter]
+    public IList<DayEvent> Events { get; set; } = new List<DayEvent>();
+
+    [Parameter]
+    public int Month { get; set; }
+
+    [Parameter]
+    public int Year { get; set; }
+
+    public AddOrEditEventModel AddOrEditEventModel { get; private set; } = default!;
+
+    private void OnAddOrEventDialogOpen(int day, DayEvent? evt, IEnumerable<DayEvent> dayEvents)
+    {
+        AddOrEditEventModel.Year = Year;
+        AddOrEditEventModel.Day = day;
+        AddOrEditEventModel.Month = Month;
+        AddOrEditEventModel.DayEvents = dayEvents;
+
+        if (evt is null)
+        {
+            AddOrEditEventModel.Reset();
+        }
+        else
+        {
+            AddOrEditEventModel.EventId = evt.Id;
+            AddOrEditEventModel.Title = evt.Title;
+            AddOrEditEventModel.Description = evt.Description;
+
+            var evtTimestamp = evt.Timestamp - _timeZoneOffset;
+            AddOrEditEventModel.SetTime(evtTimestamp.Hour, evtTimestamp.Minute);
+        }
+
+        dayEventDialog.Open();
+        StateHasChanged();
+    }
+
+    private void DeleteDayEvent(DayEvent dayEvent)
+    {
+        confirmDialog.ConfirmAction(
+            $"Are you sure to delete the event \"{dayEvent.Title}\"?", 
+            async () =>
+            {
+                await deleteEventUseCase.DeleteEvent(dayEvent.Id);
+                Events.Remove(dayEvent);
+
+                StateHasChanged();
+            });
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+        _timeZoneOffset = await timeZoneService.GetClientOffsetAsync();
+    }
+
+    private async Task AddOrEditDayEvent()
+    {
+        var vc = new ValidationContext(AddOrEditEventModel);
+        var validationResults = AddOrEditEventModel.Validate(vc);
+        var validationErrors = validationResults.Where(v => !string.IsNullOrEmpty(v.ErrorMessage)).Select(v => v.ErrorMessage!).ToList();
+        if (validationErrors.Any())
+        {
+            AddOrEditEventModel.Errors.AddRange(validationErrors);
+            StateHasChanged();
+
+            return;
+        }
+        else
+        {
+            AddOrEditEventModel.Errors.RemoveAll(e => true);
+        }
+
+        bool isNewEvent = string.IsNullOrEmpty(AddOrEditEventModel.EventId);
+        IDayEventProcessor dayEventProcessor = isNewEvent ? addDayEventUseCase : updateDayEventUseCase;
+
+        var processEventResult = await dayEventProcessor.ProcessAsync(AddOrEditEventModel);
+        if (!processEventResult.IsSuccess)
+        {
+            AddOrEditEventModel.Errors.Add("Unable to create event. Please try again later.");
+            StateHasChanged();
+
+            return;
+        }
+
+        if (isNewEvent)
+        {
+            OnNewDayEventCreated(
+                new DayEvent
+                {
+                    Id = processEventResult.EventId!,
+                    Timestamp = AddOrEditEventModel.Timestamp.ToUniversalTime(),
+                    Title = AddOrEditEventModel.Title!,
+                    Description = AddOrEditEventModel.Description!
+                });
+        }
+        else
+        {
+            OnDayEventUpdated();
+        }
+
+        dayEventDialog.Close();
+        StateHasChanged();
+    }
+
+    protected override void OnParametersSet()
+    {
+        base.OnParametersSet();
+
+        AddOrEditEventModel = new(UserId);
+        _lastMonthDay = DateTime.DaysInMonth(Year, Month);
+    }
+
+    private IEnumerable<DayEvent> GetEvents(int day)
+    {
+        var minDate = new DateTime(Year, Month, day).ToUniversalTime();
+        var maxDate = new DateTime(Year, Month, day, 23, 59, 59).ToUniversalTime();
+        return Events.Where(e => e.Timestamp >= minDate && e.Timestamp <= maxDate).OrderBy(d => d.Timestamp);
+    }
+
+    private void OnNewDayEventCreated(DayEvent newEvent)
+    {
+        if (!Events.Any())
+        {
+            Events.Add(newEvent);
+        }
+        else
+        {
+            var previousEvent = Events.FirstOrDefault(e => e.Timestamp > AddOrEditEventModel.Timestamp);
+            if (previousEvent is null)
+            {
+                Events.Insert(0, newEvent);
+            }
+            else
+            {
+                var idx = Events.IndexOf(previousEvent);
+                Events.Insert(idx >= 1 ? idx - 1 : 0, newEvent);
+            }
+        }
+    }
+
+    private void OnDayEventUpdated()
+    {
+        var eventToUpdate = Events.First(e => e.Id == AddOrEditEventModel.EventId);
+        eventToUpdate.Timestamp = AddOrEditEventModel.Timestamp.ToUniversalTime();
+        eventToUpdate.Title = AddOrEditEventModel.Title!;
+        eventToUpdate.Description = AddOrEditEventModel.Description!;
+    }
+}

@@ -1,0 +1,12 @@
+﻿.time-input-wrapper {
+    display: flex;
+    gap: 3px;
+}
+
+.hours-input-container ::deep input {
+    width: 48px !important;
+}
+
+.minutes-input-container ::deep input {
+    width: 48px !important;
+}

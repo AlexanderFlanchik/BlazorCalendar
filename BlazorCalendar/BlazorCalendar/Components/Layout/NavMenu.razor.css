@@ -1,0 +1,8 @@
+.navigation-container {
+    display: flex;
+    height: 45px;
+    padding-left: 20px;
+    padding-right: 20px;
+    justify-content: space-between;
+    line-height: 45px;
+}

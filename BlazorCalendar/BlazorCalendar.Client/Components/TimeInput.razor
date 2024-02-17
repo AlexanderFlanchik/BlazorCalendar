@@ -1,0 +1,82 @@
+﻿@rendermode InteractiveAuto
+
+@implements IAsyncDisposable
+@inject IJSRuntime JSRuntime
+
+<div class="time-input-wrapper">
+    <div class="hours-input-container">
+        <InputNumber kind="time" sub-kind="hours" @bind-Value="Hours" min="0" max="23"></InputNumber>
+    </div>
+    <div class="hours-minutes-separator">
+        :
+    </div>
+    <div class="minutes-input-container">
+        <InputNumber kind="time" sub-kind="minutes" @bind-Value="Minutes" min="0" max="59"></InputNumber>
+    </div>
+</div>
+
+@code {
+    private int minutes, hours;
+
+    private Task<IJSObjectReference>? _moduleTask;
+    private Task<IJSObjectReference> moduleTask => _moduleTask 
+        ??= JSRuntime.InvokeAsync<IJSObjectReference>("import", "./scripts/timeInput.js").AsTask();
+
+#pragma warning disable BL0007
+    [Parameter]
+    public int Hours
+    {
+        get => hours;
+        set
+        {
+            if (hours == value)
+            {
+                return;
+            }
+
+            hours = value;
+
+            OnValuesChanged?.Invoke(hours, minutes);
+        }
+    }
+
+    [Parameter]
+    public int Minutes 
+    { 
+        get => minutes;
+        set
+        {
+            if (minutes == value)
+            {
+                return;
+            }
+
+            minutes = value;
+
+            OnValuesChanged?.Invoke(hours, minutes);
+        }
+    }
+#pragma warning restore BL0007
+
+    [Parameter]
+    public Action<int, int>? OnValuesChanged { get; set; }
+
+    protected async override Task OnInitializedAsync()
+    {
+        var dts = await JSRuntime.InvokeAsync<int>("_getClientTimezoneOffset");
+
+        var module = await moduleTask;
+        await module.InvokeVoidAsync("timeInputsInit");
+
+        await base.OnInitializedAsync();
+    }
+
+    public async ValueTask DisposeAsync()
+    {
+        if (_moduleTask is not null)
+        {
+            var module = await moduleTask;
+            await module.DisposeAsync();
+        }
+    }
+}

@@ -1,0 +1,43 @@
+﻿@if (AddOrEditEventShown)
+{
+    <div class="evt-link-container">
+        <a href="javascript:void(0)" class="evt-content" @onclick="UpdateEvent">@evtLabel</a>
+        <a href="javascript:void(0)" class="evt-delete-link" @onclick="DeleteEvent" title="Delete the event">X</a>
+    </div>
+}
+else
+{
+    <span class="evt-passed-content">@evtLabel</span>
+}
+
+@code {
+    private string evtLabel = string.Empty;
+
+    [Parameter]
+    public string Title { get; set; } = default!;
+
+    [Parameter]
+    public DateTime EventTimestamp { get; set; }
+
+    [Parameter]
+    public bool AddOrEditEventShown { get; set; }
+
+    [Parameter]
+    public Action UpdateEvent { get; set; } = default!;
+
+    [Parameter]
+    public Action DeleteEvent { get; set; } = default!;
+
+    protected override void OnParametersSet()
+    {
+        base.OnParametersSet();
+
+        var minutes = EventTimestamp.Minute.ToString();
+        minutes = minutes.Length == 1 ? $"0{minutes}" : minutes;
+
+        var hours = EventTimestamp.Hour.ToString();
+        hours = hours.Length == 1 ? $"0{hours}" : hours;
+
+        evtLabel = string.Format("[{0}:{1}] {2}", hours, minutes, Title);
+    } 
+}

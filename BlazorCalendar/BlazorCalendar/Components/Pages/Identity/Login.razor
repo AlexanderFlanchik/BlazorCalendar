@@ -1,0 +1,110 @@
+﻿@page "/login"
+
+@using BlazorCalendar.Shared.Common
+@using BlazorCalendar.UseCases.Identity
+@using Microsoft.AspNetCore.Authentication
+@using System.Security.Claims
+@using Microsoft.AspNetCore.Authentication.Cookies
+
+@inject IGetUserInfo getUserInfoUseCase
+@inject NavigationManager navigationManager
+@inject ITimeZoneService timeZoneService
+
+<PageTitle>Login</PageTitle>
+
+<div class="login-wrapper">
+    <div class="login-form-container">
+        <div class="please-login-message">Sign In</div>
+        <div class="form-inner-container">
+            <EditForm id="form1" method="post" EditContext="editContext" OnValidSubmit="@LoginUser" FormName="LoginUser">
+                @if (!string.IsNullOrEmpty(loginError))
+                {
+                    <div class="login-error">@loginError</div>
+                }
+                <div class="form-row">
+                    <div class="form-row-left">
+                        <span>Your email: </span>
+                    </div>
+                    <div class="form-row-right">
+                        <InputText @bind-Value="UserCredentials.Email"></InputText>
+                    </div>
+                </div>
+                <ValidationMessage For="() => UserCredentials.Email" />
+                <div class="form-row">
+                    <div class="form-row-left">
+                        <span>Password: </span>
+                    </div>
+                    <div class="form-row-right">
+                     <InputText @bind-Value="UserCredentials.Password" type="password"></InputText>
+                    </div>
+                </div>
+                <ValidationMessage For="() => UserCredentials.Password" />
+                <div class="button-container">
+                    <button type="submit" class="btn btn-primary">Sign in..</button>
+                    <span>or you can <a href="/sign-up">register</a></span>
+                </div>
+                <input type="hidden" name="TimeZoneOffset" />
+            </EditForm>
+        </div>
+    </div>
+</div>
+
+@code {
+    private EditContext? editContext;
+    private ValidationMessageStore? messageStore;
+    private string? loginError;
+
+    [CascadingParameter]
+    public HttpContext HttpContext { get; set; } = default!;
+
+    [SupplyParameterFromForm]
+    public Credentials UserCredentials { get; set; } = new();
+
+    private async Task LoginUser()
+    {
+        var userInfo = await getUserInfoUseCase.GetAsync(UserCredentials.Email!, UserCredentials.Password!);
+
+        if (userInfo is not null)
+        {
+            var claims = new List<Claim>()
+            {
+                new Claim(Constants.CustomClaims.UserId, userInfo.UserId),
+                new Claim(ClaimTypes.Name, userInfo.UserName)
+            };
+
+            var identity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
+            var principal = new ClaimsPrincipal(identity);
+
+            await HttpContext.SignInAsync(principal);
+
+            navigationManager.NavigateTo("/");
+        }
+        else
+        {
+            loginError = "Unable to login. Please check your email and password.";
+        }
+    }
+
+    protected override void OnInitialized()
+    {
+        base.OnInitialized();
+
+        editContext = new(UserCredentials);
+        editContext.OnValidationRequested += (sender, evt) => 
+        {
+            messageStore?.Clear();
+
+            if (string.IsNullOrEmpty(UserCredentials.Email))
+            {
+                messageStore?.Add(() => UserCredentials.Email!, "Email must not be empty.");
+            }
+
+            if (string.IsNullOrEmpty(UserCredentials.Password))
+            {
+                messageStore?.Add(() => UserCredentials.Password!, "Password must not be empty.");
+            }
+        };
+
+        messageStore = new(editContext);
+    }
+}

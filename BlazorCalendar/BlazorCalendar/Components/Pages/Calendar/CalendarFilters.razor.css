@@ -1,0 +1,15 @@
+﻿.calendar-filters {
+    display: flex;
+    gap: 25px;
+    width: 550px;
+}
+
+.calendar-filters-item-left > select {
+    height: 35px;
+    width: 75px;
+}
+
+.calendar-filters-item-right > select {
+    height: 35px;
+    width: 125px;
+}
