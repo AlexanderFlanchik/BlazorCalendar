@@ -23,6 +23,11 @@ Follow these steps to get started:
 
    ```bash
    git clone https://github.com/your-username/BlazorCalendar.git
+
+2. ```bash
    dotnet restore
-   dotnet build
+   
+3. ```bash
    dotnet run
+
+or open BlazorCalendar.sln solution in Visual Studio 2022+
