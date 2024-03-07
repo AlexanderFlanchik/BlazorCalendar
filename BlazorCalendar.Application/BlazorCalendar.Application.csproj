@@ -17,6 +17,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\BlazorCalendar.Domain\BlazorCalendar.Domain.csproj" />
+    <ProjectReference Include="..\BlazorCalendar.Shared\BlazorCalendar.Shared.csproj" />
   </ItemGroup>
 
 </Project>

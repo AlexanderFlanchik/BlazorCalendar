@@ -1,22 +1,20 @@
-﻿using BlazorCalendar.Application.Features.Calendar.Queries;
-using BlazorCalendar.DTOs;
-using BlazorCalendar.Shared.Common;
+﻿using BlazorCalendar.Application.Features.Calendar.Mappings;
+using BlazorCalendar.Application.Features.Calendar.Queries;
+using BlazorCalendar.Shared.DTOs.Calendar;
+using BlazorCalendar.Shared.UseCases.Calendar;
 using MediatR;
 
 namespace BlazorCalendar.UseCases.Calendar
 {
-    public interface IGetCalendar
-    {
-        Task<CalendarModel> GetAsync(int year, int month, string userId);
-    }
-
-    public class GetCalendar(ISender sender) : IGetCalendar
+    public class GetCalendar(
+        ISender sender, 
+        CalendarResponseMapper mapper) : IGetCalendar
     {
         public async Task<CalendarModel> GetAsync(int year, int month, string userId)
         {
             var calendarData = await sender.Send(new CalendarRequest(month, year, userId));
-
-            return new CalendarModel(calendarData);
+            var res = mapper.Map(calendarData);
+            return new CalendarModel(mapper.Map(calendarData));
         }
     }
 }

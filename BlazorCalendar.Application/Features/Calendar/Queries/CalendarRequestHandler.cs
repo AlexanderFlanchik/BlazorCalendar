@@ -1,5 +1,6 @@
 ﻿using BlazorCalendar.Application.DTOs;
 using BlazorCalendar.Domain.Calendar;
+using BlazorCalendar.Shared.DTOs.Calendar;
 using MediatR;
 using Microsoft.Extensions.Options;
 

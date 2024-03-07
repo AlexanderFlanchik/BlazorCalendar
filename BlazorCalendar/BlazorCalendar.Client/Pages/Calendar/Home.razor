@@ -1,0 +1,135 @@
+﻿@page "/"
+
+@using BlazorCalendar.Client.Pages
+@using BlazorCalendar.Shared.DTOs
+@using BlazorCalendar.Shared.DTOs.Calendar
+@using BlazorCalendar.Shared.UseCases.Calendar
+@using Microsoft.AspNetCore.Components
+@using Microsoft.AspNetCore.Authorization
+@using BlazorCalendar.Client.Common
+@using Microsoft.AspNetCore.Components.Authorization
+@using System.Security.Claims
+
+@rendermode InteractiveAuto
+
+@inject IGetCalendar getCalendarUseCase
+@inject PersistentComponentState ApplicationState
+@implements IDisposable
+
+@attribute [Authorize]
+
+<PageTitle>My Calendar</PageTitle>
+
+<div class="calendar-wrapper">
+    <CalendarFilters 
+        Month="@month" 
+        Year="@year" 
+        Months="@model.CurrentCalendar.Months" 
+        Years="@model.CurrentCalendar.Years" 
+        OnValuesChanged="@LoadCalendarData"
+    />
+    <EventGrid
+        UserId="@userId"
+        Events="@dayEvents"
+        Month="@month"
+        Year="@year" 
+    />
+    <div class="button-bar">
+        @if (month > 1)
+        {
+            <button class="btn btn-primary" @onclick="@PreviousClick">Previous</button>
+        }
+
+        @if (month < 12)
+        {
+            <button class="btn btn-primary" @onclick="@NextClick">Next...</button>
+        }
+    </div>
+</div>
+
+@code {
+    private const string ModelKey = "CalendarModelState";
+
+    CalendarModel model = CalendarModel.Empty;
+
+    [CascadingParameter]
+    public Task<AuthenticationState>? AuthStateTask { get; set; }
+
+    int year, month;
+    string userId = string.Empty;
+    private IList<DayEvent> dayEvents = new List<DayEvent>();
+    private PersistingComponentStateSubscription _subscription;
+
+    protected async override Task OnInitializedAsync()
+    {
+        if (AuthStateTask is null)
+        {
+            return;
+        }
+
+        var authState = await AuthStateTask;
+        var currentUserId = authState.GetCurrentUserId();
+
+        if (currentUserId is null)
+        {
+            return;
+        }
+
+        _subscription = ApplicationState.RegisterOnPersisting(Persist);
+
+        userId = currentUserId;
+        var now = DateTime.UtcNow;
+
+        await LoadCalendarData(now.Month, now.Year);
+    }
+
+    private Task Persist()
+    {
+        ApplicationState.PersistAsJson(ModelKey, model);
+
+        return Task.CompletedTask;
+    }
+
+    private async Task LoadCalendarData(int newMonth, int newYear)
+    {
+        year = newYear;
+        month = newMonth;
+
+        await LoadCurrentCalendarData();
+    }
+
+    private async Task PreviousClick()
+    {
+        month--;
+
+        await LoadCurrentCalendarData();
+    }
+
+    private async Task NextClick()
+    {
+        month++;
+
+        await LoadCurrentCalendarData();
+    }
+
+    private async Task LoadCurrentCalendarData()
+    {
+        if (ApplicationState.TryTakeFromJson<CalendarModel>(ModelKey, out var storedModel) && storedModel is not null)
+        {
+            model = storedModel;
+        }
+        else
+        {
+            model = await getCalendarUseCase.GetAsync(year, month, userId);
+        }
+       
+        dayEvents = model.CurrentCalendar.DayEvents;
+
+        StateHasChanged();
+    }
+
+    public void Dispose()
+    {
+        _subscription.Dispose();
+    }
+}

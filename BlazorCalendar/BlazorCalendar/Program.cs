@@ -1,9 +1,10 @@
-using BlazorCalendar.Client.Pages;
 using BlazorCalendar.Components;
 using BlazorCalendar.Application;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using BlazorCalendar.Infrastructure;
 using BlazorCalendar.Common;
+using BlazorCalendar.Client.Components.Layout;
+using BlazorCalendar.Api;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -25,6 +26,14 @@ builder.Services.AddPresentationServices();
 
 var app = builder.Build();
 
+app.Use(async (ctx, next) => { 
+    var path = ctx.Request.Path;
+    var method = ctx.Request.Method;
+    Console.WriteLine($"Request received: {path}, method: {method}");
+
+    await next();
+});
+
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
@@ -45,9 +54,11 @@ app.UseHttpsRedirection();
 app.UseStaticFiles();
 app.UseAntiforgery();
 
+app.MapCalendarEndpoints();
+
 app.MapRazorComponents<App>()
     .AddInteractiveServerRenderMode()
     .AddInteractiveWebAssemblyRenderMode()
-    .AddAdditionalAssemblies(typeof(Counter).Assembly);
+    .AddAdditionalAssemblies(typeof(NavMenu).Assembly);
 
 app.Run();

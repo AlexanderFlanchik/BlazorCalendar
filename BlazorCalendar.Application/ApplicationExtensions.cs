@@ -1,4 +1,5 @@
 ﻿using BlazorCalendar.Application.DTOs;
+using BlazorCalendar.Application.Features.Calendar.Mappings;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -14,6 +15,8 @@ namespace BlazorCalendar.Application
         /// <returns>A service collection</returns>
         public static IServiceCollection AddApplication(this IServiceCollection services, IConfiguration configuration)
         {
+            services.AddTransient<CalendarResponseMapper>();
+            
             services.Configure<CalendarSettings>(cfg =>
             {
                 var calendarSettings = new CalendarSettings();

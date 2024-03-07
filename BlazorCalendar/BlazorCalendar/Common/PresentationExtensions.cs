@@ -1,6 +1,8 @@
 ﻿using BlazorCalendar.UseCases.Calendar;
 using BlazorCalendar.UseCases.Identity;
 using BlazorCalendar.Shared.Common;
+using BlazorCalendar.Shared.UseCases.Calendar;
+using Microsoft.AspNetCore.Components.Authorization;
 
 namespace BlazorCalendar.Common
 {
@@ -8,6 +10,8 @@ namespace BlazorCalendar.Common
     {
         public static IServiceCollection AddPresentationServices(this IServiceCollection services)
         {
+            services.AddScoped<AuthenticationStateProvider, PersistingAuthenticationStateProvider>();
+
             // Register app use cases here
             services.AddScoped<IGetCalendar, GetCalendar>();
             services.AddScoped<IGetUserInfo, GetUserInfo>();

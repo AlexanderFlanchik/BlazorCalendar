@@ -1,4 +1,6 @@
-﻿namespace BlazorCalendar.Application.Features.Calendar.Queries
+﻿using BlazorCalendar.Shared.DTOs.Calendar;
+
+namespace BlazorCalendar.Application.Features.Calendar.Queries
 {
     public class CalendarResponse
     {

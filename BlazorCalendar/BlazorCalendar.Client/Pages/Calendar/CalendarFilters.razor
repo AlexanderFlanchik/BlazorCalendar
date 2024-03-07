@@ -1,0 +1,64 @@
+﻿@using BlazorCalendar.Shared.DTOs.Calendar
+
+@rendermode InteractiveAuto
+
+<div class="calendar-filters">
+    <div class="calendar-filters-item-left">
+        <span>Year:</span>
+        <select @bind="@Year" @bind:after="async() => await OnValuesChanged(_month, _year)">
+            @foreach (var year in Years)
+            {
+                <option value="@year">@year</option>
+            }
+        </select>
+    </div>
+    <div class="calendar-filters-item-right">
+        <span>Month:</span>
+        <select @bind="@Month" @bind:after="async() => await OnValuesChanged(_month, _year)">
+            @foreach (var month in Months)
+            {
+                <option value="@month.Number">@month.Name</option>
+            }
+        </select>
+    </div>
+</div>
+
+@code {
+    private int _month;
+    private int _year;
+
+    [Parameter]
+    public int Month 
+    {
+        get
+        {
+            return _month;
+        }
+        set
+        {
+            _month = value;
+        }
+    }
+
+    [Parameter]
+    public int Year
+    {
+        get
+        {
+            return _year;
+        }
+        set
+        {
+            _year = value;
+        }
+    }
+
+    [Parameter]
+    public IList<int> Years { get; set; } = new List<int>();
+
+    [Parameter]
+    public IList<MonthModel> Months { get; set; } = new List<MonthModel>();
+
+    [Parameter]
+    public Func<int, int, Task> OnValuesChanged { get; set; } = (int newMonth, int newYear) => Task.CompletedTask;
+}

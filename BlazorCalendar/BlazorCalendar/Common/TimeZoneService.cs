@@ -1,4 +1,5 @@
-﻿using BlazorCalendar.Shared.Common;
+﻿using BlazorCalendar.Shared;
+using BlazorCalendar.Shared.Common;
 
 namespace BlazorCalendar.Common
 {

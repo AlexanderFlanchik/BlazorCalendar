@@ -1,5 +1,5 @@
 ﻿using BlazorCalendar.Application.Features.Identity.Commands;
-using BlazorCalendar.DTOs;
+using BlazorCalendar.Components.Pages.Identity;
 using MediatR;
 
 namespace BlazorCalendar.UseCases.Identity

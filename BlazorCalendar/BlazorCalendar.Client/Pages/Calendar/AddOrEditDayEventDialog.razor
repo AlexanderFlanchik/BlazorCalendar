@@ -1,0 +1,65 @@
+﻿@using BlazorCalendar.Client.Components
+@using BlazorCalendar.Shared.DTOs;
+@using BlazorCalendar.Shared.DTOs.Calendar
+
+@rendermode InteractiveAuto
+
+<ModalDialog Opened="@isOpened">
+    <HeaderContent>
+      <span>@dialogTitle</span>
+   </HeaderContent>
+   <DialogContent>
+     <div class="add-new-event-inner">
+        @if (DialogContext.Errors.Any())
+        {
+            <div class="validation-errors-container">
+                <ul class="validation-errors-list">
+                    @foreach (var error in DialogContext.Errors)
+                    {
+                        <li>@error</li>
+                    }
+                </ul>
+            </div>
+        }
+        <div class="dialog-content-label">Event title:</div> 
+        <div class="dialog-content-input">
+           <InputText @bind-Value="DialogContext.Title"></InputText>
+        </div>
+        <div class="dialog-content-label">Description:</div>
+         <div class="dialog-content-input">
+           <InputText @bind-Value="DialogContext.Description"></InputText>
+        </div>
+        <div class="timestamp-container">
+           <div>Select start time for event:</div>
+           <TimeInput Hours="DialogContext.Hours" Minutes="DialogContext.Minutes" OnValuesChanged="DialogContext.SetTime"></TimeInput>
+        </div>
+     </div>
+   </DialogContent>
+   <Footer>
+       <div class="add-new-event-footer">
+        <button class="btn btn-primary" @onclick="async () => await OnDayEventAddedOrEdited()">OK</button>
+        <button class="btn btn-default btn-bordered-navy" @onclick="Close">Cancel</button>
+       </div>
+   </Footer>
+</ModalDialog>
+
+@code {
+    private bool isOpened;
+    private string dialogTitle = default!;
+
+    [Parameter]
+    public AddOrEditEventModel DialogContext { get; set; } = default!;
+
+    [Parameter]
+    public Func<Task> OnDayEventAddedOrEdited { get; set; } = () => Task.CompletedTask;
+
+    public void Open() => isOpened = true;
+    public void Close() => isOpened = false;
+
+    protected override void OnParametersSet()
+    {
+        base.OnParametersSet();
+
+        dialogTitle = DialogContext?.EventId is not null ? "Edit Event" : "Add New Event";
+    }
+}

@@ -1,12 +1,10 @@
 ﻿using BlazorCalendar.Application.Features.Calendar.Commands;
-using BlazorCalendar.Components.Pages.Calendar;
-using BlazorCalendar.DTOs;
+using BlazorCalendar.Shared.DTOs.Calendar;
+using BlazorCalendar.Shared.UseCases.Calendar;
 using MediatR;
 
 namespace BlazorCalendar.UseCases.Calendar
 {
-    public interface IAddDayEvent: IDayEventProcessor;
-
     public class AddDayEvent(ISender sender): IAddDayEvent
     {
         public async Task<ProcessDayEventResult> ProcessAsync(AddOrEditEventModel eventModel)

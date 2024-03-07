@@ -14,6 +14,7 @@
     <ProjectReference Include="..\BlazorCalendar.Client\BlazorCalendar.Client.csproj" />
     <PackageReference Include="MediatR" Version="12.2.0" />
     <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.Server" Version="8.0.0" />
+    <PackageReference Include="System.Text.Json" Version="8.0.2" />
   </ItemGroup>
 
 </Project>

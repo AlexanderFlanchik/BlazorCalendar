@@ -1,0 +1,108 @@
+﻿@using BlazorCalendar.Shared.DTOs;
+@using BlazorCalendar.Shared.DTOs.Calendar
+
+@rendermode InteractiveAuto
+
+@{
+    var date = $"{Day} {GetDayName(Day)}";
+    string? dayClass = null;
+        
+    var dateValue = new DateTime(Year, Month, Day);
+    if (dateValue.Month == Today.Month && dateValue.Year == Today.Year && dateValue.Day == Today.Day)
+    {
+       dayClass = "day-today";
+    } 
+    else if (dateValue < Today)
+    {
+       dayClass = "day-past";
+       AddOrEditEventShown = false;
+    }
+
+    dayClass = dayClass is not null ? $"day-card {dayClass}" : "day-card";
+}
+
+<div class="@dayClass">
+    <div class="day-card-header">
+        <div class="day-title">@date</div>
+          @if (AddOrEditEventShown)
+          {
+            <div class="add-event">
+                <a href="javascript:void(0)" class="add-event-link" title="Add new day event" @onclick="() => OnAddOrEventDialogOpen(Day, null, Events)">+</a>
+             </div>
+          }
+     </div>
+     <div class="day-card-content">
+        @if (Events.Any())
+        {
+            <ul class="day-card-events-list">
+                @foreach (var evt in Events.Take(5))
+                {
+                    var e = evt!;
+                    var localTimeStamp = e.Timestamp - TimeZoneOffset;
+
+                    <li>
+                       <DayEventRow 
+                           AddOrEditEventShown="AddOrEditEventShown" 
+                           EventTimestamp="localTimeStamp" 
+                           Title="@e.Title" 
+                           UpdateEvent="() => OnAddOrEventDialogOpen(Day, e, Events)"
+                           DeleteEvent="() => OnDeleteEvent(e)"
+                       />
+                    </li>
+                }
+            </ul>
+
+            if (Events.ToArray().Length > 5)
+            {
+                <div class="show-all-link-container">
+                    <a href="#" class="show-all-link" title="Show all day events" @onclick="() => allEventsDialog?.Open()">Show all..</a>
+                </div>
+            }
+        }
+     </div>
+</div>
+
+<CascadingValue Value="this">
+    <AllEventsDialog @ref="allEventsDialog" />
+</CascadingValue>
+
+@code {
+    private AllEventsDialog? allEventsDialog;
+
+    public bool AddOrEditEventShown { get; private set; } = true;
+
+    [Parameter]
+    public DateTime Today { get; set; }
+
+    [Parameter]
+    public int LastMonthDay { get; set; }
+
+    [Parameter]
+    public int Month { get; set; }
+
+    [Parameter]
+    public int Year { get; set; }
+
+    [Parameter]
+    public int Day { get; set; }
+
+    [Parameter]
+    public TimeSpan TimeZoneOffset { get; set; }
+
+    [Parameter]
+    public Action<int, DayEvent?, IEnumerable<DayEvent>> OnAddOrEventDialogOpen { get; set; } = default!;
+
+    [Parameter]
+    public Action<DayEvent> OnDeleteEvent { get; set; } = default!;
+
+    [Parameter]
+    public IEnumerable<DayEvent> Events { get; set; } = default!;
+
+    private string GetDayName(int day)
+    {
+        var date = new DateTime(Year, Month, day);
+        var dayName = date.DayOfWeek;
+
+        return dayName.ToString().Substring(0, 2);
+    }
+}
