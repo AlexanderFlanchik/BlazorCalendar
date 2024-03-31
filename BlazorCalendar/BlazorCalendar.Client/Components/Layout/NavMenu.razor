@@ -10,7 +10,7 @@
     {
         <div class="home-link-container">
             <a href="/">Home</a> |
-            <a href="/about">About</a>
+            <a href="/about" @onclick="About">About</a>
         </div>
         <div class="identity-container">
             <span class="welcome-message">Welcome, @UserName!</span> |
@@ -46,5 +46,10 @@
         navigationManager.NavigateTo("/SignOut");
 
         StateHasChanged();
+    }
+
+    private void About()
+    {
+        navigationManager.NavigateTo("/About");
     }
 }

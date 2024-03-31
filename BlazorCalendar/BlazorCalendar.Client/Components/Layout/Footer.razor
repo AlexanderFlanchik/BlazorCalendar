@@ -1,0 +1,14 @@
+﻿@rendermode InteractiveAuto
+
+@inject IJSRuntime jsRunTime
+
+<div>
+    Copyright &copy; @DateTime.UtcNow.Year by AVS | <a href="#" @onclick="ContactUs">Contact us..</a>
+</div>
+
+@code {
+    private async Task ContactUs()
+    {
+        await jsRunTime.InvokeVoidAsync("contactUsFn");
+    }
+}

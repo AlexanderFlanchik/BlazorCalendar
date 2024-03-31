@@ -1,0 +1,21 @@
+﻿.about-us-content {
+    display: flex;
+    gap: 5px;
+    justify-content: space-evenly;
+}
+.general-info {
+    width: 500px;
+    letter-spacing: 1px;
+    font-size: 18px;
+    color: navy;
+}
+
+.stack-image-container {
+    padding: 5px;
+    border-radius: 5px;
+}
+
+.stack-image-container img {
+    width: 500px;
+    border-radius: 10px;
+}

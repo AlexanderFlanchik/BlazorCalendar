@@ -1,0 +1,19 @@
+﻿.content-holder {
+    margin-top: 25px;
+    padding: 10px;
+    font-size: larger;
+}
+
+.contact-us-links {
+    margin-top: 5px;
+    list-style-type: none;
+}
+
+.contact-us-links a {
+    text-decoration: none;
+}
+
+.contact-us-links a:hover {
+    text-decoration: none;
+    color: red;
+}
